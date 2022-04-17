@@ -1,0 +1,47 @@
+<template>
+    <template if:true={formAvailable}>
+
+        <div class="header slds-page-header">
+            <div class="slds-grid">
+                <div class="slds-text-align_center slds-page-header__title">
+                    I guess you deserved it, go ahead
+                </div>
+            </div>
+        </div>
+
+        <lightning-card>
+            <lightning-record-form object-api-name={objectApiName} fields={fields} onsuccess={handleSuccess}></lightning-record-form>
+        </lightning-card>
+
+    </template>
+
+    <br>
+
+    <template if:false={formAvailable}>
+        
+        <div class="header slds-page-header">
+            <div class="slds-grid">
+                <div class="slds-text-align_center slds-page-header__title">
+                    Really wanna add an account ? Reach 10 &nbsp; ¯\_(ツ)_/¯ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Score : {score}
+                </div>
+                <!--<div class="slds-col slds-size_1-of-2 slds-text-align_center slds-page-header__title slds-truncate">
+                    Speed : {speed} 
+                </div>-->
+            </div>
+        </div>
+        
+        <lightning-card>
+            <div class="container">
+                <div>
+                    <template for:each={blocks} for:item="block">
+
+                        <div class={block.class} key={block.id}>&nbsp;</div>
+                        
+                    </template>
+                </div>
+            </div>
+        </lightning-card>
+
+    </template>
+    
+</template>
