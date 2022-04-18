@@ -13,7 +13,7 @@ export default class AccountCreator extends LightningElement {
 
     // account form
     handleSuccess(event) {
-        if (this.formAvailable) {
+        if (this.formAvailable && !this.overlayAvailable) {
             const toastEvent = new ShowToastEvent({
                 title: "Account created",
                 message: "Record ID: " + event.detail.id,
@@ -45,6 +45,8 @@ export default class AccountCreator extends LightningElement {
     callEat;
     score = 0;
     formAvailable = false;
+    overlayAvailable = true;
+    snakeAvailable = false;
 
     /***************/
     /* SNAKE LOGIC */
@@ -73,6 +75,9 @@ export default class AccountCreator extends LightningElement {
     }
 
     init() {
+        this.overlayAvailable = false;
+        this.snakeAvailable = true;
+
         this.xHead = 0;
         this.yHead = 0;
 
@@ -96,20 +101,21 @@ export default class AccountCreator extends LightningElement {
     setSpeed() {
         clearInterval(this.callMove);
         clearInterval(this.callEat);
-        if (!this.formAvailable) {
+        if (!this.formAvailable && !this.overlayAvailable) {
             this.callMove = setInterval(() => this.moveSnake(), 300 / this.speed);
             this.callEat = setInterval(() => this.eat(), 300 / this.speed);
         }
     }
 
     moveSnake() {
-        if (!this.formAvailable) {
+        if (!this.formAvailable && !this.overlayAvailable) {
             // get head's position
             this.currentPos = this.blocks.findIndex(
                 (x) => x.id === `${this.xHead}:${this.yHead}`
             );
 
             if (!this.justEat) {
+
                 // change previous head's position's class to .block
                 if (this.tailX.length == 0) {
                     this.blocks[this.currentPos].class = "block";
@@ -154,8 +160,13 @@ export default class AccountCreator extends LightningElement {
             
                     this.blocks[tailChange].class = "block snake";
                     }
-
                 }
+
+                // snake eats itself game over (NOT WORKING PROPERLY)
+                /*if ((this.tailX.includes(`${this.xHead}`)) && (this.tailY.includes(`${this.yHead}`))) {
+                    this.gameOver();
+                    console.log("gameOooooooooover eats itself");
+                }*/
 
 
             } else { // (justEat)
@@ -185,7 +196,7 @@ export default class AccountCreator extends LightningElement {
     }
 
     gameOver() {
-        if (!this.formAvailable) {
+        if (!this.formAvailable && !this.overlayAvailable) {
             console.log("game over");
             this.xHead = 0;
             this.yHead = 0;
@@ -201,56 +212,90 @@ export default class AccountCreator extends LightningElement {
         }
     }
 
-    controls() {
-        if (!this.formAvailable) {
-            window.addEventListener('keydown', (e) => {
-                e.preventDefault();
-                switch (e.key) {
-                    case 'ArrowUp':
-                        this.xSpeed = 0;
-                        this.ySpeed = -1;
-                        break;
-                    case 'ArrowDown':
-                        this.xSpeed = 0;
-                        this.ySpeed = 1;
-                        break;
-                    case 'ArrowLeft':
-                        this.xSpeed = -1;
-                        this.ySpeed = 0;
-                        break;
-                    case 'ArrowRight':
-                        this.xSpeed = 1;
-                        this.ySpeed = 0;
-                        break;
-                    default:
-                        break;
-                }
-            });
+handler(e) {
 
-            window.addEventListener("touchstart", (e) => {
-                if(e.touches) {
-                    e.preventDefault();
-                    if (this.ySpeed == -1) {
-                        this.xSpeed = 1;
-                        this.ySpeed = 0;
-                        console.log("was up ");
-                    } else if (this.ySpeed == 1) {
-                        this.xSpeed = -1;
-                        this.ySpeed = 0;
-                        console.log("was down ");
-                    } else if (this.xSpeed == -1) {
-                        this.xSpeed = 0;
-                        this.ySpeed = -1;
-                        console.log("was left ");
-                    } else {
-                        this.xSpeed = 0;
-                        this.ySpeed = 1;
-                        console.log("was right ::: ");
-                    }
-                }
-            });
-        }
+    e.preventDefault();
+    switch (e.key) {
+        case 'ArrowUp':
+            this.xSpeed = 0;
+            this.ySpeed = -1;
+            console.log("uuuuuppppppppp");
+            break;
+        case 'ArrowDown':
+            this.xSpeed = 0;
+            this.ySpeed = 1;
+            break;
+        case 'ArrowLeft':
+            this.xSpeed = -1;
+            this.ySpeed = 0;
+            break;
+        case 'ArrowRight':
+            this.xSpeed = 1;
+            this.ySpeed = 0;
+            break;
+        default:
+            break;
     }
+}
+
+    createListener() {
+
+        // save a reference to the bound function since it has a different identity
+        //this.handler = (e) => this.handler(e).bind(this);
+        //component.set("v.handler", (e) => this.handler(e));
+        window.addEventListener('keydown', (e) => this.handler(e));
+
+        /*window.addEventListener('keydown', (e) => {
+
+            e.preventDefault();
+            switch (e.key) {
+                case 'ArrowUp':
+                    this.xSpeed = 0;
+                    this.ySpeed = -1;
+                    console.log("uuuuuppppppppp");
+                    break;
+                case 'ArrowDown':
+                    this.xSpeed = 0;
+                    this.ySpeed = 1;
+                    break;
+                case 'ArrowLeft':
+                    this.xSpeed = -1;
+                    this.ySpeed = 0;
+                    break;
+                case 'ArrowRight':
+                    this.xSpeed = 1;
+                    this.ySpeed = 0;
+                    break;
+                default:
+                    break;
+            }
+
+        });*/
+
+        /*window.addEventListener("touchstart", (e) => {
+            if(e.touches) {
+                e.preventDefault();
+                if (this.ySpeed == -1) {
+                    this.xSpeed = 1;
+                    this.ySpeed = 0;
+                    console.log("was up ");
+                } else if (this.ySpeed == 1) {
+                    this.xSpeed = -1;
+                    this.ySpeed = 0;
+                    console.log("was down ");
+                } else if (this.xSpeed == -1) {
+                    this.xSpeed = 0;
+                    this.ySpeed = -1;
+                    console.log("was left ");
+                } else {
+                    this.xSpeed = 0;
+                    this.ySpeed = 1;
+                    console.log("was right ::: ");
+                }
+            }
+        });*/
+    }
+
 
     addFood() {
         this.xFood = Math.floor(Math.random() * this.xMax);
@@ -263,15 +308,18 @@ export default class AccountCreator extends LightningElement {
 
     eat() {
         if (this.xFood == this.xHead && this.yFood == this.yHead) {
-            console.log("\nbien mangé\n\n");
             this.addFood();
             this.justEat = true;
-            this.speed += 0.1;
+            this.speed += 0.4;
             this.setSpeed();
             this.score += 1;
             if (this.score >= 2) {
+                //const handlerC = component.get("v.handler");
+                //window.removeEventListener('keydown', this.handler, true);
+                
                 this.formAvailable = true;
-                this.score = "Bien joué";
+                this.snakeAvailable = false;
+                window.replaceWith(window.cloneNode(true));
             }
         }
     }
@@ -284,20 +332,23 @@ export default class AccountCreator extends LightningElement {
         return this.score;
     }
 
+    connectedCallback() {
+        this.createListener();
+    }
+
     // snake loop
     renderedCallback() {
-        if (!this.formAvailable) {
+        if (!this.formAvailable && !this.overlayAvailable) {
             if (!this.rendered) {
                 this.rendered = true;
                 this.displayBlocks();
                 this.init();
                 this.addFood();
-                this.controls();
 
-                window.addEventListener('resize', () => {
+                /*window.addEventListener('resize', () => {
                     console.log("window resized");
                     this.gameOver();
-                });
+                });*/
             }
         }
     }

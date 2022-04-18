@@ -3,7 +3,7 @@
 
         <div class="header slds-page-header">
             <div class="slds-grid">
-                <div class="slds-text-align_center slds-page-header__title">
+                <div class="slds-text-align_center slds-text-heading_medium">
                     I guess you deserved it, go ahead
                 </div>
             </div>
@@ -15,14 +15,12 @@
 
     </template>
 
-    <br>
-
-    <template if:false={formAvailable}>
+    <template if:true={snakeAvailable}>
         
         <div class="header slds-page-header">
             <div class="slds-grid">
-                <div class="slds-text-align_center slds-page-header__title">
-                    Really wanna add an account ? Reach 10 &nbsp; ¯\_(ツ)_/¯ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Score : {score}
+                <div class="slds-text-align_center slds-text-heading_medium">
+                    Really wanna add an account ? Reach 2 (use arrow keys) &nbsp; ¯\_(ツ)_/¯ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Score : {score}
                 </div>
                 <!--<div class="slds-col slds-size_1-of-2 slds-text-align_center slds-page-header__title slds-truncate">
                     Speed : {speed} 
@@ -43,5 +41,15 @@
         </lightning-card>
 
     </template>
-    
+
+    <template if:true={overlayAvailable}>
+        <lightning-card>
+            <div>
+                <button class="slds-button slds-button_brand slds-align_absolute-center" onclick={init}>
+                    Create an account
+                </button>
+            </div>
+        </lightning-card>
+    </template>
+
 </template>
